@@ -1,0 +1,13 @@
+# app
+fastapi
+uvicorn
+pydantic
+email-validator
+uvicorn[standard]
+jinja2
+
+# db
+SQLAlchemy
+alembic
+psycopg2-binary
+asyncpg
