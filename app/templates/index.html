@@ -22,11 +22,11 @@
             var ws = null
             function connectWS(event) {
                 var token = document.getElementById("socketID")
-                ws = new WebSocket("ws://localhost:8000/ws/?token=" + token.value)
+                ws = new WebSocket("ws://localhost/ws/?token=" + token.value)
                 ws.onmessage = function(event) {
                     var messages = document.getElementById('messages')
                     var message = document.createElement('li')
-                    var content = document.createTextNode(event.data)
+                    var content = document.createTextNode(JSON.parse(event.data))
                     message.appendChild(content)
                     messages.appendChild(message)
                 };
