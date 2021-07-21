@@ -1,4 +1,4 @@
-from db.config import async_session
+from config import async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 async def get_session() -> AsyncSession:

@@ -3,23 +3,33 @@ from sqlalchemy import update
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from db.models.message import Message
+from db.utils import get_current_time
 
-import pytz
-from datetime import datetime
-tz = pytz.timezone('Asia/Ho_Chi_Minh')
-async def create_message(db_session: AsyncSession, username: str, message: str):
+async def create_message(
+    db_session: AsyncSession,
+    user_id: int,
+    text: str
+):
     new_message = Message(
-        username=username,
-        message=message,
-        created_at = datetime.now().astimezone(tz)
-
+        user_id=user_id,
+        text=text,
+        created_at = get_current_time()
     )
     db_session.add(new_message)
     await db_session.commit()
     await db_session.flush()
     return new_message
 
-async def get_all_messages(db_session: AsyncSession) -> List[Message]:
-    q = await db_session.execute(select(Message).order_by(Message.id))
-    return q.scalars().all()
+import sys
+async def get_all_messages(
+    db_session: AsyncSession,
+    greaterid: int,
+    quantity: int,
+) -> List[Message]:
+    result = await db_session.execute(
+        select(Message)
+        .where(Message.id < greaterid)
+        .order_by(Message.id.desc())
+    )
+    return result.scalars().all()[:quantity]
 

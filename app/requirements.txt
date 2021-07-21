@@ -6,6 +6,9 @@ email-validator
 uvicorn[standard]
 jinja2
 pytz
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
 
 # db
 SQLAlchemy

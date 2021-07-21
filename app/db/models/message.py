@@ -1,16 +1,18 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from db.config import Base
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from datetime import datetime
 from sqlalchemy import inspect
-#from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from config import BaseClass
+from db.models.user import User
+from sqlalchemy.orm import relationship
+from db.utils import get_current_time
 
-#@as_declarative()
-class Message(Base):
-    __tablename__ = 'messages'
-    id = Column(Integer, primary_key=True)
-    username = Column(String, nullable=False)
-    message = Column(String, nullable=False)
-    created_at = Column(DateTime(timezone=True),default=datetime.now())
-
-    def as_dict(self) -> dict:
-        return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
+class Message(BaseClass):
+    id = Column(Integer, index=True, primary_key=True)
+    text = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True),default=get_current_time())
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(
+        User,
+        uselist=False,
+        primaryjoin='Message.user_id == User.id',
+    )
