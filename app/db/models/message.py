@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from db.config import Base
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy import inspect
 #from sqlalchemy.ext.declarative import as_declarative, declared_attr
 

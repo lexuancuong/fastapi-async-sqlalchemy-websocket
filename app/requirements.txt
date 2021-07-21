@@ -5,6 +5,7 @@ pydantic
 email-validator
 uvicorn[standard]
 jinja2
+pytz
 
 # db
 SQLAlchemy
