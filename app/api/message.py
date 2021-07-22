@@ -14,7 +14,7 @@ from config import engine, async_session, sessionmaker
 from dependencies import get_session
 
 # For configuration
-from config import settings, SignalType
+from config import settings, RequestType, ResponseType
 
 from utils import get_current_user
 
@@ -46,7 +46,8 @@ class ConnectionManager:
     def disconnect(self, user_id: str):
         del self.active_connections_dict[user_id]
 
-    async def send_personal_message(self, data: list, websocket: WebSocket):
+    async def send_personal_message(self, data: dict, websocket: WebSocket):
+        #  logging.error(data)
         data = json.dumps(data, default=DatetimeEncoder)
         await websocket.send_json(data)
 
@@ -64,7 +65,10 @@ manager = ConnectionManager()
 
 @router.get("/", response_class=HTMLResponse)
 async def get(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request, "domain": settings.DOMAIN}
+    )
 
 @router.websocket("/ws/")
 async def websocket_endpoint(
@@ -84,29 +88,43 @@ async def websocket_endpoint(
             data = await websocket.receive_text()
             try:
                 data = json.loads(str(data))
-                if data.get('signal_type') == SignalType.MESSAGE:
+                #  logging.error(data)
+                if data.get('request_type') == RequestType.MESSAGE:
                     text = data.get('text')
                     message_db = await crud.create_message(
                         db_session=async_db_connection,
                         user_id=user_id,
                         text=text
                     )
-                    json_data = message_db.as_dict()
+                    json_message_db = message_db.as_dict()
+                    message = {
+                        'response_type': ResponseType.MESSAGE,
+                        'data': json_message_db
+                    }
+                    #  message = json.dumps(message, default=DatetimeEncoder)
+                    #  logging.debug(message)
                     # await manager.send_personal_message(data, websocket)
-                    await manager.broadcast(message=json_data)
+                    await manager.broadcast(message=message)
                 else:
-                    message_id = int(data.get('id'))
+                    message_id = 1000000
+                    if data.get('id'):
+                        message_id = int(data.get('id'))
                     quantity = int(data.get('quantity'))
                     messages_db = await crud.get_all_messages(
                         db_session=async_db_connection,
                         greaterid=message_id,
                         quantity=quantity
                     )
-                    json_data = []
+                    list_data = []
                     for cell in messages_db:
-                        json_data.append(cell.as_dict())
+                        list_data.append(cell.as_dict())
+
+                    data = {
+                        'response_type': ResponseType.MESSAGES,
+                        'data': list_data
+                    }
                     await manager.send_personal_message(
-                        data=json_data,
+                        data=data,
                         websocket=websocket
                     )
             except:

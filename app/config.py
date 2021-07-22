@@ -22,11 +22,18 @@ class Settings(BaseSettings):
     USERNAME2: str
     PASSWORD2: str
 
+    DOMAIN: str
+
 settings = Settings()
 
-class SignalType(enum.IntEnum):
+class RequestType(enum.IntEnum):
     MESSAGE = 1
     REQUEST = 2
+
+class ResponseType(enum.IntEnum):
+    MESSAGE = 1
+    MESSAGES = 2
+    NOTI = 3
 
 
 initial_users = [

@@ -17,6 +17,9 @@ RUN pip install -r requirements.txt
 
 COPY . /app
 
-# CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+# For DEV
+#CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+
+# For Production
 CMD gunicorn main:app  -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 
