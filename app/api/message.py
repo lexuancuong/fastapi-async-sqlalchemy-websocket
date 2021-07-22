@@ -2,9 +2,11 @@
 from fastapi import APIRouter
 from typing import List, Dict
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, HTTPException, Request, Depends
+from starlette.websockets import WebSocketState
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+
 
 # For DB
 import db.crud as crud
@@ -51,7 +53,12 @@ class ConnectionManager:
     async def broadcast(self,message: Dict):
         message = json.dumps(message, default=DatetimeEncoder)
         for connection in self.active_connections_dict:
-            await self.active_connections_dict[connection].send_json(message)
+            tmp_websocket = self.active_connections_dict[connection]
+            if tmp_websocket.application_state == WebSocketState.CONNECTED \
+                    and tmp_websocket.client_state == WebSocketState.CONNECTED:
+                await self.active_connections_dict[connection].send_json(message)
+            else:
+                del self.active_connections_dict[connection]
 
 manager = ConnectionManager()
 
@@ -75,32 +82,36 @@ async def websocket_endpoint(
     try:
         while True:
             data = await websocket.receive_text()
-            data = json.loads(str(data))
-            if data.get('signal_type') == SignalType.MESSAGE:
-                text = data.get('text')
-                message_db = await crud.create_message(
-                    db_session=async_db_connection,
-                    user_id=user_id,
-                    text=text
-                )
-                json_data = message_db.as_dict()
-                # await manager.send_personal_message(data, websocket)
-                await manager.broadcast(message=json_data)
-            else:
-                message_id = int(data.get('id'))
-                quantity = int(data.get('quantity'))
-                messages_db = await crud.get_all_messages(
-                    db_session=async_db_connection,
-                    greaterid=message_id,
-                    quantity=quantity
-                )
-                json_data = []
-                for cell in messages_db:
-                    json_data.append(cell.as_dict())
-                await manager.send_personal_message(
-                    data=json_data,
-                    websocket=websocket
-                )
+            try:
+                data = json.loads(str(data))
+                if data.get('signal_type') == SignalType.MESSAGE:
+                    text = data.get('text')
+                    message_db = await crud.create_message(
+                        db_session=async_db_connection,
+                        user_id=user_id,
+                        text=text
+                    )
+                    json_data = message_db.as_dict()
+                    # await manager.send_personal_message(data, websocket)
+                    await manager.broadcast(message=json_data)
+                else:
+                    message_id = int(data.get('id'))
+                    quantity = int(data.get('quantity'))
+                    messages_db = await crud.get_all_messages(
+                        db_session=async_db_connection,
+                        greaterid=message_id,
+                        quantity=quantity
+                    )
+                    json_data = []
+                    for cell in messages_db:
+                        json_data.append(cell.as_dict())
+                    await manager.send_personal_message(
+                        data=json_data,
+                        websocket=websocket
+                    )
+            except:
+                pass
+
     except WebSocketDisconnect:
         manager.disconnect(user_id)
         await manager.broadcast(f"{user_id} left the chat")
