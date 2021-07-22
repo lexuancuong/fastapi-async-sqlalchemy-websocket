@@ -45,11 +45,11 @@ class ConnectionManager:
         del self.active_connections_dict[user_id]
 
     async def send_personal_message(self, data: list, websocket: WebSocket):
-        data = json.dumps(data, default=DatetimeEncoder),
+        data = json.dumps(data, default=DatetimeEncoder)
         await websocket.send_json(data)
 
     async def broadcast(self,message: Dict):
-        message = json.dumps(message, default=DatetimeEncoder),
+        message = json.dumps(message, default=DatetimeEncoder)
         for connection in self.active_connections_dict:
             await self.active_connections_dict[connection].send_json(message)
 

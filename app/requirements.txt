@@ -9,6 +9,7 @@ pytz
 passlib[bcrypt]
 python-jose[cryptography]
 python-multipart
+gunicorn
 
 # db
 SQLAlchemy
