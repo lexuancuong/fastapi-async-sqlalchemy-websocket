@@ -10,3 +10,4 @@ __pycache__/
 velup-io-service-key.json
 .DS_Store
 *.DS_Store
+data/*

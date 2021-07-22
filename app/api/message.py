@@ -97,6 +97,7 @@ async def websocket_endpoint(
                         text=text
                     )
                     json_message_db = message_db.as_dict()
+                    json_message_db['avatar'] = user.avatar
                     message = {
                         'response_type': ResponseType.MESSAGE,
                         'data': json_message_db
@@ -117,7 +118,9 @@ async def websocket_endpoint(
                     )
                     list_data = []
                     for cell in messages_db:
-                        list_data.append(cell.as_dict())
+                        tmp = cell.as_dict()
+                        tmp['avatar'] = user.avatar
+                        list_data.append(tmp)
 
                     data = {
                         'response_type': ResponseType.MESSAGES,

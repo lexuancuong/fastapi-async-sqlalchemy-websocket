@@ -21,7 +21,8 @@ async def startup():
                 await create_user(
                     db_session=session,
                     username=element.get('username'),
-                    hased_password=get_password_hash(element.get('password'))
+                    hased_password=get_password_hash(element.get('password')),
+                    avatar=element.get('avatar')
                 )
 
 # Less security! Dont use this for production

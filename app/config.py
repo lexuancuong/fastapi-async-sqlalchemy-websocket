@@ -21,7 +21,8 @@ class Settings(BaseSettings):
     PASSWORD1: str
     USERNAME2: str
     PASSWORD2: str
-
+    AVATAR1: str
+    AVATAR2: str
     DOMAIN: str
 
 settings = Settings()
@@ -39,11 +40,15 @@ class ResponseType(enum.IntEnum):
 initial_users = [
     {
         "username": settings.USERNAME1,
-        "password": settings.PASSWORD1
+        "password": settings.PASSWORD1,
+        "avatar": f'http://{settings.DOMAIN}/image/{settings.AVATAR1}'
+
     },
     {
         "username": settings.USERNAME2,
-        "password": settings.PASSWORD2
+        "password": settings.PASSWORD2,
+        "avatar": f'http://{settings.DOMAIN}/image/{settings.AVATAR1}'
+
     }
 ]
 

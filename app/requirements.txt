@@ -11,6 +11,7 @@ python-jose[cryptography]
 python-multipart
 gunicorn
 starlette
+aiofiles
 
 # db
 SQLAlchemy

@@ -5,10 +5,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.models.user import User
 from db.utils import get_current_time
 
-async def create_user(db_session: AsyncSession, username: str, hased_password: str):
+async def create_user(
+    db_session: AsyncSession,
+    username: str,
+    hased_password: str,
+    avatar: str
+):
     new_user = User(
         username=username,
-        hashed_password=hased_password
+        hashed_password=hased_password,
+        avatar=avatar
     )
     db_session.add(new_user)
     await db_session.commit()

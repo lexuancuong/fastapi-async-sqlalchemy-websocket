@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Query
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -10,6 +10,7 @@ from db.crud import get_user_by_username
 from dependencies import get_session
 from utils import authenticate_user, create_access_token
 from datetime import timedelta
+from fastapi.responses import FileResponse
 
 router = APIRouter()
 
@@ -42,3 +43,9 @@ async def login_for_access_token(
         expires_delta=access_token_expires
     )
     return {"access_token": access_token, "user_id": user.id}
+
+@router.get("/image/{filename}", response_class=FileResponse)
+def get_image(filename: str):
+    image_path = f'./data/{filename}'
+    # in newest version up to now, you can use image path directly
+    return image_path
