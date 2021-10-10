@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, DateTime
+
 from config import BaseClass
-from datetime import datetime
-from sqlalchemy import inspect
+from sqlalchemy import Column, Integer, String
+
 
 class User(BaseClass):
     id = Column(Integer, index=True, primary_key=True)
