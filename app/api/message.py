@@ -8,8 +8,8 @@ from typing import Dict
 # For DB
 import db.crud as crud
 # For configuration
-from config import (RequestType, ResponseType, async_session, settings)
-from fastapi import (APIRouter, Query, Request, WebSocket, WebSocketDisconnect)
+from config import RequestType, ResponseType, async_session, settings
+from fastapi import APIRouter, Query, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from starlette.websockets import WebSocketState

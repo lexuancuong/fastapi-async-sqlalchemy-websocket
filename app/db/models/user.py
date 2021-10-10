@@ -1,4 +1,3 @@
-
 from config import BaseClass
 from sqlalchemy import Column, Integer, String
 

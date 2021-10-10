@@ -1,4 +1,3 @@
-
 from config import BaseClass
 from db.models.user import User
 from db.utils import get_current_time

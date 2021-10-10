@@ -14,8 +14,6 @@ async def create_message(db_session: AsyncSession, user_id: int, text: str):
     return new_message
 
 
-
-
 async def get_all_messages(
     db_session: AsyncSession,
     greaterid: int,
